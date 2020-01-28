@@ -1,30 +1,32 @@
 package GoFrequency
 
 import (
+	"math"
 	"strings"
 )
 
-func Analysis(input string) map[string]int{
-	freqMap := make(map[string]int)
-	freqMap["len"] = len(input)
+func Map(input string) map[string]int{
+	countMap := make(map[string]int)
+	countMap["len"] = len(input)
 	for key := range input{
-		freqMap[strings.Split(input, "")[key]]++
+		countMap[strings.Split(input, "")[key]]++
 	}
-	return freqMap
+	return countMap
 }
 
-func Compare(map1 map[string]int, map2 map[string]int) float64{
-	pts := map1["len"] + map2["len"]
-	keys := MapKeys(map1)
+func Score(map1 map[string]int, map2 map[string]int) float64{
+	pts := float64(map1["len"] + map2["len"])
+	var score float64
+	keys := Keys(map1)
 	for key := range keys{
 		if keys[key] != "len" {
-			pts = pts - Abs(map1[keys[key]] - map2[keys[key]])
+			score = pts - math.Abs(float64(map1[keys[key]]) - float64(map2[keys[key]]))
 		}
 	}
-	return float64(pts) / float64(map1["len"]+map2["len"])
+	return score / pts
 }
 
-func MapKeys(m map[string]int) []string{
+func Keys(m map[string]int) []string{
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -32,9 +34,13 @@ func MapKeys(m map[string]int) []string{
 	return keys
 }
 
-func Abs(x int) int{
-	if x < 0 {
-		return -x
+func Analysis(input map[string]int) map[string]float64{
+	keys := Keys(input)
+	freqMap := make(map[string]float64)
+	for key := range keys{
+		if keys[key] != "len" {
+			freqMap[keys[key]] = float64(input[keys[key]]) / float64(input["len"]) * 100
+		}
 	}
-	return x
+	return freqMap
 }
